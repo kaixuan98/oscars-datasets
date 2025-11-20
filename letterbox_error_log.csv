@@ -1,0 +1,177 @@
+Moulin Rouge,2001,Traceback (most recent call last):
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 122, in run_letterbox_scraper
+    raise Exception("No matching film found in top 10 results")
+Exception: No matching film found in top 10 results
+
+Crash,2005,Traceback (most recent call last):
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 124, in run_letterbox_scraper
+    rating = extract_score(found_url)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 72, in extract_score
+    rating_tag = driver.find_element(By.CSS_SELECTOR, "a.display-rating")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/webdriver.py", line 926, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/webdriver.py", line 458, in execute
+    self.error_handler.check_response(response)
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/errorhandler.py", line 233, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":"a.display-rating"}
+  (Session info: headless chrome=114.0.5735.198); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception
+Stacktrace:
+#0 0x57119c9a74e3 <unknown>
+#1 0x57119c6d6c76 <unknown>
+#2 0x57119c712c96 <unknown>
+#3 0x57119c712dc1 <unknown>
+#4 0x57119c74c7f4 <unknown>
+#5 0x57119c73203d <unknown>
+#6 0x57119c74a30e <unknown>
+#7 0x57119c731de3 <unknown>
+#8 0x57119c7072dd <unknown>
+#9 0x57119c70834e <unknown>
+#10 0x57119c9673e4 <unknown>
+#11 0x57119c96b3d7 <unknown>
+#12 0x57119c975b20 <unknown>
+#13 0x57119c96c023 <unknown>
+#14 0x57119c93a1aa <unknown>
+#15 0x57119c9906b8 <unknown>
+#16 0x57119c990847 <unknown>
+#17 0x57119c9a0243 <unknown>
+#18 0x715503787609 start_thread
+
+
+Good Night, and Good Luck.,2005,Traceback (most recent call last):
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 118, in run_letterbox_scraper
+    search_results = search_letterbox(row["film"])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 24, in search_letterbox
+    result_list = driver.find_element(By.CLASS_NAME, "results")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/webdriver.py", line 926, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/webdriver.py", line 458, in execute
+    self.error_handler.check_response(response)
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/errorhandler.py", line 233, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":".results"}
+  (Session info: headless chrome=114.0.5735.198); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception
+Stacktrace:
+#0 0x57119c9a74e3 <unknown>
+#1 0x57119c6d6c76 <unknown>
+#2 0x57119c712c96 <unknown>
+#3 0x57119c712dc1 <unknown>
+#4 0x57119c74c7f4 <unknown>
+#5 0x57119c73203d <unknown>
+#6 0x57119c74a30e <unknown>
+#7 0x57119c731de3 <unknown>
+#8 0x57119c7072dd <unknown>
+#9 0x57119c70834e <unknown>
+#10 0x57119c9673e4 <unknown>
+#11 0x57119c96b3d7 <unknown>
+#12 0x57119c975b20 <unknown>
+#13 0x57119c96c023 <unknown>
+#14 0x57119c93a1aa <unknown>
+#15 0x57119c9906b8 <unknown>
+#16 0x57119c990847 <unknown>
+#17 0x57119c9a0243 <unknown>
+#18 0x715503787609 start_thread
+
+
+Frost/Nixon,2008,Traceback (most recent call last):
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 118, in run_letterbox_scraper
+    search_results = search_letterbox(row["film"])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 24, in search_letterbox
+    result_list = driver.find_element(By.CLASS_NAME, "results")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/webdriver.py", line 926, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/webdriver.py", line 458, in execute
+    self.error_handler.check_response(response)
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/errorhandler.py", line 233, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":".results"}
+  (Session info: headless chrome=114.0.5735.198); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception
+Stacktrace:
+#0 0x57119c9a74e3 <unknown>
+#1 0x57119c6d6c76 <unknown>
+#2 0x57119c712c96 <unknown>
+#3 0x57119c712dc1 <unknown>
+#4 0x57119c74c7f4 <unknown>
+#5 0x57119c73203d <unknown>
+#6 0x57119c74a30e <unknown>
+#7 0x57119c731de3 <unknown>
+#8 0x57119c7072dd <unknown>
+#9 0x57119c70834e <unknown>
+#10 0x57119c9673e4 <unknown>
+#11 0x57119c96b3d7 <unknown>
+#12 0x57119c975b20 <unknown>
+#13 0x57119c96c023 <unknown>
+#14 0x57119c93a1aa <unknown>
+#15 0x57119c9906b8 <unknown>
+#16 0x57119c990847 <unknown>
+#17 0x57119c9a0243 <unknown>
+#18 0x715503787609 start_thread
+
+
+The Hurt Locker,2009,Traceback (most recent call last):
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 122, in run_letterbox_scraper
+    raise Exception("No matching film found in top 10 results")
+Exception: No matching film found in top 10 results
+
+Precious: Based on the Novel 'Push' by Sapphire,2009,Traceback (most recent call last):
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 122, in run_letterbox_scraper
+    raise Exception("No matching film found in top 10 results")
+Exception: No matching film found in top 10 results
+
+Once upon a Time...in Hollywood,2019,Traceback (most recent call last):
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 118, in run_letterbox_scraper
+    search_results = search_letterbox(row["film"])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 24, in search_letterbox
+    result_list = driver.find_element(By.CLASS_NAME, "results")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/webdriver.py", line 926, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/webdriver.py", line 458, in execute
+    self.error_handler.check_response(response)
+  File "/home/averychin/data-engineering-examples/oscars-datasets/oscar-project-env/lib/python3.12/site-packages/selenium/webdriver/remote/errorhandler.py", line 233, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":".results"}
+  (Session info: headless chrome=114.0.5735.198); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception
+Stacktrace:
+#0 0x57119c9a74e3 <unknown>
+#1 0x57119c6d6c76 <unknown>
+#2 0x57119c712c96 <unknown>
+#3 0x57119c712dc1 <unknown>
+#4 0x57119c74c7f4 <unknown>
+#5 0x57119c73203d <unknown>
+#6 0x57119c74a30e <unknown>
+#7 0x57119c731de3 <unknown>
+#8 0x57119c7072dd <unknown>
+#9 0x57119c70834e <unknown>
+#10 0x57119c9673e4 <unknown>
+#11 0x57119c96b3d7 <unknown>
+#12 0x57119c975b20 <unknown>
+#13 0x57119c96c023 <unknown>
+#14 0x57119c93a1aa <unknown>
+#15 0x57119c9906b8 <unknown>
+#16 0x57119c990847 <unknown>
+#17 0x57119c9a0243 <unknown>
+#18 0x715503787609 start_thread
+
+
+Judas and the Black Messiah,2020,Traceback (most recent call last):
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 122, in run_letterbox_scraper
+    raise Exception("No matching film found in top 10 results")
+Exception: No matching film found in top 10 results
+
+Sound of Metal,2020,Traceback (most recent call last):
+  File "/home/averychin/data-engineering-examples/oscars-datasets/scripts/scraper_source/letterbox/scraper.py", line 122, in run_letterbox_scraper
+    raise Exception("No matching film found in top 10 results")
+Exception: No matching film found in top 10 results
+

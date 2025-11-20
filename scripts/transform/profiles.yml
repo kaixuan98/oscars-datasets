@@ -1,0 +1,6 @@
+oscar_analysis:
+  outputs:
+    dev:
+      type: duckdb
+      path: dev.duckdb
+  target: dev
