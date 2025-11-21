@@ -4,3 +4,4 @@ data/*
 data/
 __pycache__/
 logs/
+oscar-project-env/*
