@@ -74,7 +74,7 @@ def extract_score(url):
 
     match = re.search(r"based on ([\d,]+) ratings", tooltip_text)
     if match:
-        rating_count = int(match.group(1).replace(",", ""))
+        rating_count = float(match.group(1).replace(",", ""))
     else:
         rating_count = None
 
