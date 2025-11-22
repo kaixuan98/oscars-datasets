@@ -1,21 +1,140 @@
+import os
+import re
+import traceback
+import pandas as pd
+from datetime import datetime, timezone
+from selenium.webdriver.common.by import By
 from scripts.scraper_source.base_scraper import AbstractScraper
 
 
 class RottenTomatoScraper(AbstractScraper):
-    souce_name = "rotten_tomato"
-    extended_columns = []
+    def __init__(self):
+        super().__init__()
+        self.base_search_path = "https://www.rottentomatoes.com/search?search="
+        extract_date = datetime.now(timezone.utc).strftime("%Y%m%d")
+        extended_columns = [
+            "rt_tomatometer",
+            "rt_critics_count",
+            "rt_popcornmeter",
+            "rt_audiences_count",
+            "rt_url",
+            "rt_units",
+        ]
+        self.source_name = "rotten_tomato"
+        self.output_path = f"data/rt_{extract_date}.csv"
+        self._update_output_columns(extended_columns)
+
+    def _clean_rt_rating(self, raw: str) -> float:
+        cleaned = raw.strip().replace("%", "")
+        return float(cleaned)
+
+    def _clean_rt_rating_counts(self, raw: str, type: str) -> float:
+        cleaned = raw.strip().replace(",", "")
+        if type == "tomatometer":
+            num_str = cleaned.split()[0]
+            result = float(num_str)
+        elif type == "popcornmeter":
+            match = re.search(r"\d+", cleaned)
+            result = float(match.group(0))
+        else:
+            result = None
+
+        return result
 
     def load_to_process_data(self, input_path="data/raw/master_list.csv"):
-        return super().load_to_process_data(input_path)
+        df = pd.read_csv(input_path)
+
+        if os.path.exists(self.output_path):
+            done = pd.read_csv(self.output_path)
+        else:
+            done = pd.DataFrame(columns=self.output_columns)
+
+        processed_titles = set(zip(done["film"], done["year_film"]))
+
+        to_process = df[
+            ~df.apply(lambda x: (x["film"], x["year_film"]) in processed_titles, axis=1)
+        ]
+
+        return to_process
 
     def search_film(self, query):
-        return super().search_film(query)
+        all_searches = []
+        self.driver.get(f"{self.base_search_path}{query}")
+
+        search_results = self.driver.find_elements(
+            By.CSS_SELECTOR, "search-page-media-row[data-qa='data-row']"
+        )
+
+        for s in search_results[:10]:
+            try:
+                link_elem = s.find_element(By.CSS_SELECTOR, "a[slot='title']")
+
+                film_url = link_elem.get_attribute("href")
+                film_title = link_elem.text.strip()
+                film_year = int(s.get_attribute("release-year"))
+
+                all_searches.append(
+                    {"url": film_url, "title": film_title, "year": film_year}
+                )
+            except Exception:
+                continue
+
+        return all_searches
 
     def extract_match(self, sources, target):
-        return super().extract_match(sources, target)
+        sources_df = pd.DataFrame(sources)
+        clean_source_title = (
+            sources_df["title"]
+            .str.strip()
+            .str.lower()
+            .str.replace("’", "")
+            .str.replace("'", "")
+        )
+        clean_target_title = (
+            target["film"].strip().lower().replace("’", "").replace("'", "")
+        )
+        filtered_films = sources_df[
+            (clean_source_title == clean_target_title)
+            & (sources_df["year"] == target["year_film"])
+        ]
+        found_url = None
+        if len(filtered_films) > 0:
+            found_url = filtered_films.iloc[0]["url"]
+
+        return found_url
 
     def extract_score(self, source_url):
-        return super().extract_score(source_url)
+        self.driver.get(source_url)
+
+        try:
+            tomatometer_elem = self.driver.find_element(
+                By.CSS_SELECTOR, "rt-text[slot='criticsScore']"
+            )
+            popcornmeter_elem = self.driver.find_element(
+                By.CSS_SELECTOR, "rt-text[slot='audienceScore']"
+            )
+
+            tomatometer_count_elem = self.driver.find_element(
+                By.CSS_SELECTOR, "rt-link[slot='criticsReviews']"
+            )
+            popcornmeter_count_elem = self.driver.find_element(
+                By.CSS_SELECTOR, "rt-link[slot='audienceReviews']"
+            )
+
+            return {
+                "rt_units": "percentage",
+                "rt_tomatometer": self._clean_rt_rating(tomatometer_elem.text),
+                "rt_critics_count": self._clean_rt_rating_counts(
+                    tomatometer_count_elem.text, "tomatometer"
+                ),
+                "rt_popcornmeter": self._clean_rt_rating(popcornmeter_elem.text),
+                "rt_audiences_count": self._clean_rt_rating_counts(
+                    popcornmeter_count_elem.text, "popcornmeter"
+                ),
+            }
+
+        except Exception:
+            print(traceback.format_exc())
 
     def write_to_output(self, row, url, ratings):
         return super().write_to_output(row, url, ratings)

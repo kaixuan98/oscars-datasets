@@ -9,11 +9,12 @@ from scripts.scraper_source.utils import rate_limit
 
 
 class AbstractScraper(ABC):
-
     def __init__(self):
         self.source_name = "base"
         self.output_columns = ["film", "year_film", "year_ceremony"]
         self.driver: WebDriver | None = None
+        self.output_path: str | None = None
+        self.base_search_path: str | None = None
 
     def _update_output_columns(self, extended_columns):
         self.output_columns = [*self.output_columns, *extended_columns]
@@ -21,7 +22,8 @@ class AbstractScraper(ABC):
     def run(self) -> None:
         self.start_driver()
         to_process_df = self.load_to_process_data()
-        for i, row in to_process_df.iterrows():
+        for i, row in to_process_df.tail(3).iterrows():
+            print("processing: ", row["film"])
             try:
                 query = self.query_formatter(row["film"])
                 search_results = self.search_film(query)
@@ -34,13 +36,15 @@ class AbstractScraper(ABC):
 
                 ratings = self.extract_score(found_url)
 
-                self.write_to_output(row, found_url, ratings)
+                print(ratings)
+                # self.write_to_output(row, found_url, ratings)
             except Exception:
                 err = traceback.format_exc()
-                with open(
-                    "logs/errors/letterbox_error_log.csv", "a", encoding="utf-8"
-                ) as f:
-                    f.write(f"{row['film']},{row['year_film']},{err}\n")
+                print(err)
+                # with open(
+                #     "logs/errors/letterbox_error_log.csv", "a", encoding="utf-8"
+                # ) as f:
+                #     f.write(f"{row['film']},{row['year_film']},{err}\n")
                 continue
 
             # rate_limit(i)

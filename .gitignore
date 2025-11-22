@@ -6,3 +6,4 @@ __pycache__/
 logs/
 oscar-project-env/*
 *.csv
+.DS_store
