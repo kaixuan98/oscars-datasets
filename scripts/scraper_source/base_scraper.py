@@ -11,7 +11,7 @@ from scripts.scraper_source.utils import rate_limit
 class AbstractScraper(ABC):
     def __init__(self):
         self.source_name = "base"
-        self.output_columns = ["film", "year_film", "year_ceremony"]
+        self.output_columns = ["master_id", "film", "year_film", "year_ceremony"]
         self.driver: WebDriver | None = None
         self.output_path: str | None = None
         self.base_search_path: str | None = None
@@ -20,6 +20,7 @@ class AbstractScraper(ABC):
         self.output_columns = [*self.output_columns, *extended_columns]
 
     def run(self) -> None:
+        all_rows = []
         self.start_driver()
         to_process_df = self.load_to_process_data()
         for i, row in to_process_df.tail(3).iterrows():
@@ -35,19 +36,18 @@ class AbstractScraper(ABC):
                     )
 
                 ratings = self.extract_score(found_url)
-
-                print(ratings)
-                # self.write_to_output(row, found_url, ratings)
+                all_rows.append([*row, found_url, *ratings.values()])
             except Exception:
                 err = traceback.format_exc()
                 print(err)
-                # with open(
-                #     "logs/errors/letterbox_error_log.csv", "a", encoding="utf-8"
-                # ) as f:
-                #     f.write(f"{row['film']},{row['year_film']},{err}\n")
+                with open(
+                    "logs/errors/letterbox_error_log.csv", "a", encoding="utf-8"
+                ) as f:
+                    f.write(f"{row['film']},{row['year_film']},{err}\n")
                 continue
 
             # rate_limit(i)
+        self.write_to_output(all_rows)
         self.close_driver()
         return
 
@@ -95,5 +95,5 @@ class AbstractScraper(ABC):
         pass
 
     @abstractmethod
-    def write_to_output(self, row, url: str, ratings) -> None:
+    def write_to_output(self, data) -> None:
         pass

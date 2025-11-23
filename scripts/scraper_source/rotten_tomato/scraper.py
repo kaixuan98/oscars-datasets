@@ -13,15 +13,15 @@ class RottenTomatoScraper(AbstractScraper):
         self.base_search_path = "https://www.rottentomatoes.com/search?search="
         extract_date = datetime.now(timezone.utc).strftime("%Y%m%d")
         extended_columns = [
+            "rt_url",
+            "rt_units",
             "rt_tomatometer",
             "rt_critics_count",
             "rt_popcornmeter",
             "rt_audiences_count",
-            "rt_url",
-            "rt_units",
         ]
         self.source_name = "rotten_tomato"
-        self.output_path = f"data/rt_{extract_date}.csv"
+        self.output_path = f"data/scraped/rt_{extract_date}.csv"
         self._update_output_columns(extended_columns)
 
     def _clean_rt_rating(self, raw: str) -> float:
@@ -136,5 +136,7 @@ class RottenTomatoScraper(AbstractScraper):
         except Exception:
             print(traceback.format_exc())
 
-    def write_to_output(self, row, url, ratings):
-        return super().write_to_output(row, url, ratings)
+    def write_to_output(self, data):
+        # remove the index
+        df = pd.DataFrame([*data], columns=self.output_columns)
+        df.to_csv(self.output_path, index=False)
