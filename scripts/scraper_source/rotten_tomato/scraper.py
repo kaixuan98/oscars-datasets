@@ -1,4 +1,3 @@
-import os
 import re
 import traceback
 import pandas as pd
@@ -40,22 +39,6 @@ class RottenTomatoScraper(AbstractScraper):
             result = None
 
         return result
-
-    def load_to_process_data(self, input_path="data/raw/master_list.csv"):
-        df = pd.read_csv(input_path)
-
-        if os.path.exists(self.output_path):
-            done = pd.read_csv(self.output_path)
-        else:
-            done = pd.DataFrame(columns=self.output_columns)
-
-        processed_titles = set(zip(done["film"], done["year_film"]))
-
-        to_process = df[
-            ~df.apply(lambda x: (x["film"], x["year_film"]) in processed_titles, axis=1)
-        ]
-
-        return to_process
 
     def search_film(self, query):
         all_searches = []

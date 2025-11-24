@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import os
 import traceback
 import unicodedata
 import pandas as pd
@@ -23,6 +24,7 @@ class AbstractScraper(ABC):
         all_rows = []
         self.start_driver()
         to_process_df = self.load_to_process_data()
+
         for i, row in to_process_df.tail(3).iterrows():
             print("processing: ", row["film"])
             try:
@@ -72,7 +74,6 @@ class AbstractScraper(ABC):
         if self.driver:
             self.driver.quit()
 
-    @abstractmethod
     def load_to_process_data(
         self,
         input_path="data/raw/master_list.csv",
@@ -80,7 +81,20 @@ class AbstractScraper(ABC):
         """
         Load the list of data from master to be process
         """
-        pass
+        df = pd.read_csv(input_path)
+
+        if os.path.exists(self.output_path):
+            done = pd.read_csv(self.output_path)
+        else:
+            done = pd.DataFrame(columns=self.output_columns)
+
+        processed_titles = set(zip(done["film"], done["year_film"]))
+
+        to_process = df[
+            ~df.apply(lambda x: (x["film"], x["year_film"]) in processed_titles, axis=1)
+        ]
+
+        return to_process
 
     @abstractmethod
     def search_film(self, query: str) -> list:
