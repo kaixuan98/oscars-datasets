@@ -1,5 +1,6 @@
 from scripts.extract import download_kaggle_dataset
 from scripts.load import upload_to_s3
+from scripts.scraper_source.douban.scraper import DoubanScraper
 from scripts.scraper_source.letterbox.scraper import run_letterbox_scraper
 from scripts.scraper_source.rotten_tomato.scraper import RottenTomatoScraper
 from scripts.utils import create_master_list
@@ -14,5 +15,8 @@ if __name__ == "__main__":
     # master_list_path = create_master_list()
     # run_letterbox_scraper()
 
-    rt_scraper = RottenTomatoScraper()
-    rt_scraper.run()
+    # rt_scraper = RottenTomatoScraper()
+    # rt_scraper.run()
+
+    douban_scraper = DoubanScraper()
+    douban_scraper.run()

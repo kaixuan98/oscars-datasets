@@ -1,20 +1,29 @@
 from abc import ABC, abstractmethod
+import os
 import traceback
 import unicodedata
+from bs4 import BeautifulSoup
 import pandas as pd
 from selenium import webdriver
+from datetime import datetime
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from scripts.scraper_source.utils import rate_limit
 
 
 class AbstractScraper(ABC):
     def __init__(self):
         self.source_name = "base"
-        self.output_columns = ["master_id", "film", "year_film", "year_ceremony"]
         self.driver: WebDriver | None = None
         self.output_path: str | None = None
         self.base_search_path: str | None = None
+        self.output_columns = ["master_id", "film", "year_film", "year_ceremony"]
+        self.tmdb_search_path = (
+            "https://www.themoviedb.org/search/movie?language=en-CA&query="
+        )
 
     def _update_output_columns(self, extended_columns):
         self.output_columns = [*self.output_columns, *extended_columns]
@@ -23,11 +32,18 @@ class AbstractScraper(ABC):
         all_rows = []
         self.start_driver()
         to_process_df = self.load_to_process_data()
+
         for i, row in to_process_df.tail(3).iterrows():
-            print("processing: ", row["film"])
             try:
                 query = self.query_formatter(row["film"])
-                search_results = self.search_film(query)
+                if self.source_name == "douban":
+                    found_tmdb_movies = self.get_film_info(query)
+                    found_tmdb_url = self.extract_match(found_tmdb_movies, row)
+                    translated_title = self.get_translated_title(found_tmdb_url)
+                    search_results = self.search_film(translated_title)
+                else:
+                    search_results = self.search_film(query)
+
                 found_url = self.extract_match(search_results, row)
 
                 if not found_url:
@@ -35,8 +51,8 @@ class AbstractScraper(ABC):
                         f"No matching film found in top 10 results: {row['film ']} - {row['year_film']}"
                     )
 
-                ratings = self.extract_score(found_url)
-                all_rows.append([*row, found_url, *ratings.values()])
+                # ratings = self.extract_score(found_url)
+                # all_rows.append([*row, found_url, *ratings.values()])
             except Exception:
                 err = traceback.format_exc()
                 print(err)
@@ -47,7 +63,7 @@ class AbstractScraper(ABC):
                 continue
 
             # rate_limit(i)
-        self.write_to_output(all_rows)
+        # self.write_to_output(all_rows)
         self.close_driver()
         return
 
@@ -72,7 +88,49 @@ class AbstractScraper(ABC):
         if self.driver:
             self.driver.quit()
 
-    @abstractmethod
+    def get_film_info(self, query) -> list:
+        all_searches = []
+        self.driver.get(f"{self.tmdb_search_path}{query}")
+
+        search_results = self.driver.find_elements(By.CSS_SELECTOR, ".card.v4.tight")
+
+        # get all the search result
+        for s in search_results[:5]:
+            try:
+                title_elem = s.find_element(By.CSS_SELECTOR, ".title a h2")
+                link_elem = s.find_element(By.CSS_SELECTOR, ".title a")
+                release_date_elm = s.find_element(
+                    By.CSS_SELECTOR, ".title .release_date"
+                )
+
+                dt = datetime.strptime(release_date_elm.text, "%B %d, %Y")
+
+                film_url = link_elem.get_attribute("href")
+                film_year = dt.year
+                film_title = title_elem.text
+
+                all_searches.append(
+                    {
+                        "url": film_url,
+                        "title": film_title,
+                        "year": film_year,
+                    }
+                )
+
+            except Exception:
+                continue
+        return all_searches
+
+    def get_translated_title(self, url) -> str:
+        parts = url.split("?", 1)  # max 1 split
+        translations_url = f"{parts[0]}/translations?{parts[1]}"
+        self.driver.get(translations_url)
+        title_el = self.driver.find_element(
+            By.CSS_SELECTOR, "#zh-CN table.media-translations h3"
+        )
+        title = title_el.text
+        return title
+
     def load_to_process_data(
         self,
         input_path="data/raw/master_list.csv",
@@ -80,14 +138,47 @@ class AbstractScraper(ABC):
         """
         Load the list of data from master to be process
         """
-        pass
+        df = pd.read_csv(input_path)
+
+        if os.path.exists(self.output_path):
+            done = pd.read_csv(self.output_path)
+        else:
+            done = pd.DataFrame(columns=self.output_columns)
+
+        processed_titles = set(zip(done["film"], done["year_film"]))
+
+        to_process = df[
+            ~df.apply(lambda x: (x["film"], x["year_film"]) in processed_titles, axis=1)
+        ]
+
+        return to_process
+
+    def extract_match(self, sources, target) -> str:
+        sources_df = pd.DataFrame(sources)
+        clean_source_title = (
+            sources_df["title"]
+            .str.strip()
+            .str.lower()
+            .str.replace("’", "")
+            .str.replace("'", "")
+        )
+        clean_target_title = (
+            target["film"].strip().lower().replace("’", "").replace("'", "")
+        )
+        year_diff = sources_df["year"] - int(target["year_film"])
+
+        filtered_films = sources_df[
+            (clean_source_title == clean_target_title)
+            & ((year_diff <= 1) & (year_diff >= -1))
+        ]
+        found_url = None
+        if len(filtered_films) > 0:
+            found_url = filtered_films.iloc[0]["url"]
+
+        return found_url
 
     @abstractmethod
     def search_film(self, query: str) -> list:
-        pass
-
-    @abstractmethod
-    def extract_match(self, sources, target) -> str:
         pass
 
     @abstractmethod

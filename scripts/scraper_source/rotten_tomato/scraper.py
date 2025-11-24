@@ -41,22 +41,6 @@ class RottenTomatoScraper(AbstractScraper):
 
         return result
 
-    def load_to_process_data(self, input_path="data/raw/master_list.csv"):
-        df = pd.read_csv(input_path)
-
-        if os.path.exists(self.output_path):
-            done = pd.read_csv(self.output_path)
-        else:
-            done = pd.DataFrame(columns=self.output_columns)
-
-        processed_titles = set(zip(done["film"], done["year_film"]))
-
-        to_process = df[
-            ~df.apply(lambda x: (x["film"], x["year_film"]) in processed_titles, axis=1)
-        ]
-
-        return to_process
-
     def search_film(self, query):
         all_searches = []
         self.driver.get(f"{self.base_search_path}{query}")
@@ -80,28 +64,6 @@ class RottenTomatoScraper(AbstractScraper):
                 continue
 
         return all_searches
-
-    def extract_match(self, sources, target):
-        sources_df = pd.DataFrame(sources)
-        clean_source_title = (
-            sources_df["title"]
-            .str.strip()
-            .str.lower()
-            .str.replace("’", "")
-            .str.replace("'", "")
-        )
-        clean_target_title = (
-            target["film"].strip().lower().replace("’", "").replace("'", "")
-        )
-        filtered_films = sources_df[
-            (clean_source_title == clean_target_title)
-            & (sources_df["year"] == target["year_film"])
-        ]
-        found_url = None
-        if len(filtered_films) > 0:
-            found_url = filtered_films.iloc[0]["url"]
-
-        return found_url
 
     def extract_score(self, source_url):
         self.driver.get(source_url)
