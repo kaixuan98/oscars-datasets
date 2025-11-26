@@ -43,26 +43,26 @@ class AbstractScraper(ABC):
                 else:
                     search_results = self.search_film(query)
 
-                # found_url = self.extract_match(search_results, row)
+                found_url = self.extract_match(search_results, row)
 
-                # if not found_url:
-                #     raise Exception(
-                #         f"No matching film found in top 10 results: {row['film ']} - {row['year_film']}"
-                #     )
+                print(row["film"])
 
-                # ratings = self.extract_score(found_url)
-                # all_rows.append([*row, found_url, *ratings.values()])
+                if not found_url:
+                    raise Exception(
+                        f"No matching film found in top 10 results: {row['film ']} - {row['year_film']}"
+                    )
+
+                ratings = self.extract_score(found_url)
+                all_rows.append([*row, found_url, *ratings.values()])
             except Exception:
                 err = traceback.format_exc()
                 print(err)
-                with open(
-                    "logs/errors/letterbox_error_log.csv", "a", encoding="utf-8"
-                ) as f:
+                with open("logs/errors/error_log.csv", "a", encoding="utf-8") as f:
                     f.write(f"{row['film']},{row['year_film']},{err}\n")
                 continue
 
             # rate_limit(i)
-        # self.write_to_output(all_rows)
+        self.write_to_output(all_rows)
         self.close_driver()
         return
 

@@ -1,157 +1,117 @@
-from datetime import datetime, timezone
-import os
 import re
 import traceback
-import pandas as pd
+from scripts.scraper_source.base_scraper import AbstractScraper
 from selenium.webdriver.common.by import By
-from scripts.scraper_source.utils import make_driver, rate_limit
-
-driver = make_driver()
-letterbox_search = "https://letterboxd.com/search/films"
-
-
-# ---------------- helpers -------------------------
-def reformat(title, replacement):
-    result = title.lower().replace(" ", replacement)
-    return result
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from datetime import datetime, timezone
+import pandas as pd
 
 
-def search_letterbox(title: str):
-    all_searches = []
-    query = reformat(title, "+")
-    driver.get(f"{letterbox_search}/{query}")
+class LetterboxScraper(AbstractScraper):
+    def __init__(self):
+        super().__init__()
+        self.source_name = "letterbox"
+        self.base_search_path = "https://letterboxd.com/search/films"
+        extract_date = datetime.now(timezone.utc).strftime("%Y%m%d")
+        extended_columns = [
+            "lb_url",
+            "lb_rating_outof",
+            "lb_rating",
+            "lb_rating_count",
+            "lb_watched_by",
+            "lb_liked_by",
+        ]
+        self.output_path = f"data/scraped/lb_{extract_date}.csv"
+        self._update_output_columns(extended_columns)
 
-    result_list = driver.find_element(By.CLASS_NAME, "results")
-    search_results = result_list.find_elements(By.TAG_NAME, "li")
+    def _extract_numbers(self, s: str):
+        nums = re.findall(r"[\d.,]+", s)
+        result = []
+        for n in nums:
+            result.append(float(n.replace(",", "")))
+        return result
 
-    for s in search_results[:10]:
-        try:
-            link_elem = s.find_element(By.CSS_SELECTOR, "h2 a")
-            year_elem = s.find_element(By.CSS_SELECTOR, "h2 small.metadata a")
+    def search_film(self, query):
+        all_searches = []
+        self.driver.get(f"{self.base_search_path}/{query}")
 
-            film_url = link_elem.get_attribute("href")
-            film_title = link_elem.text.strip()
-            film_year = int(year_elem.text.strip())
-            all_searches.append(
-                {"url": film_url, "title": film_title, "year": film_year}
-            )
-        except Exception:
-            continue
+        result_list = self.driver.find_element(By.CLASS_NAME, "results")
+        search_results = result_list.find_elements(By.TAG_NAME, "li")
 
-    return all_searches
+        for s in search_results[:10]:
+            try:
+                link_elem = s.find_element(By.CSS_SELECTOR, "h2 a")
+                year_elem = s.find_element(By.CSS_SELECTOR, "h2 small.metadata a")
 
+                film_url = link_elem.get_attribute("href")
+                film_title = link_elem.text.strip()
+                film_year = int(year_elem.text.strip())
+                all_searches.append(
+                    {"url": film_url, "title": film_title, "year": film_year}
+                )
+            except Exception:
+                continue
 
-def extract_match(sources, target):
-    sources_df = pd.DataFrame(sources)
-    clean_source_title = (
-        sources_df["title"]
-        .str.strip()
-        .str.lower()
-        .str.replace("’", "")
-        .str.replace("'", "")
-    )
-    clean_target_title = (
-        target["film"].strip().lower().replace("’", "").replace("'", "")
-    )
-    filtered_films = sources_df[
-        (clean_source_title == clean_target_title)
-        & (sources_df["year"] == target["year_film"])
-    ]
+        return all_searches
 
-    # if more than 1 results, get first value of the list
-    found_url = None
-    if len(filtered_films) > 0:
-        found_url = filtered_films.iloc[0]["url"]
-
-    return found_url
-
-
-def extract_score(url):
-    driver.get(url)
-
-    rating_tag = driver.find_element(By.CSS_SELECTOR, "a.display-rating")
-    tooltip_text = rating_tag.get_attribute("data-original-title")
-
-    match = re.search(r"based on ([\d,]+) ratings", tooltip_text)
-    if match:
-        rating_count = float(match.group(1).replace(",", ""))
-    else:
-        rating_count = None
-
-    return {"rating": float(rating_tag.text), "rating_count": rating_count}
-
-
-# ----------- functions ---------------------
-def run_letterbox_scraper():
-    extract_date = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-
-    master_list_path = "data/master_list.csv"
-    output_path = f"data/letterbox_score__{extract_date}.csv"
-
-    df = pd.read_csv(master_list_path)
-
-    # load processed data
-    if os.path.exists(output_path):
-        done = pd.read_csv(output_path)
-    else:
-        done = pd.DataFrame(
-            columns=[
-                "film",
-                "year_film",
-                "year_ceremony",
-                "lb_url",
-                "lb_rating",
-                "lb_rating_count",
-            ]
+    def extract_match(self, sources, target):
+        sources_df = pd.DataFrame(sources)
+        clean_source_title = (
+            sources_df["title"]
+            .str.strip()
+            .str.lower()
+            .str.replace("’", "")
+            .str.replace("'", "")
         )
+        clean_target_title = (
+            target["film"].strip().lower().replace("’", "").replace("'", "")
+        )
+        year_diff = sources_df["year"] - int(target["year_film"])
 
-    processed_titles = set(zip(done["film"], done["year_film"]))
+        filtered_films = sources_df[
+            (clean_source_title == clean_target_title)
+            & ((year_diff <= 1) & (year_diff >= -1))
+        ]
+        found_url = None
+        if len(filtered_films) > 0:
+            found_url = filtered_films.iloc[0]["url"]
+        else:
+            found_url = sources_df.iloc[0]["url"]
 
-    to_process = df[
-        ~df.apply(lambda x: (x["film"], x["year_film"]) in processed_titles, axis=1)
-    ]
+        return found_url
 
-    for i, row in to_process.iterrows():
-        print(f"Processing: {row['film']} - {row['year_film']}")
+    def extract_score(self, source_url):
+        self.driver.get(source_url)
 
         try:
-            search_results = search_letterbox(row["film"])
-            found_url = extract_match(search_results, row)
-
-            if not found_url:
-                raise Exception("No matching film found in top 10 results")
-
-            rating = extract_score(found_url)
-
-            new_row = pd.DataFrame(
-                [
-                    [
-                        row["film"],
-                        row["year_film"],
-                        row["year_ceremony"],
-                        found_url,
-                        rating["rating"],
-                        rating["rating_count"],
-                    ]
-                ],
-                columns=[
-                    "film",
-                    "year_film",
-                    "year_ceremony",
-                    "url",
-                    "rating",
-                    "rating_count",
-                ],
+            rating_tag = self.driver.find_element(By.CSS_SELECTOR, "a.display-rating")
+            tooltip_text = rating_tag.get_attribute("data-original-title")
+            watches_elem = self.driver.find_element(
+                By.CSS_SELECTOR, "div.production-statistic.-watches a.tooltip"
             )
-            new_row.to_csv(output_path, mode="a", header=False, index=False)
+            likes_elem = self.driver.find_element(
+                By.CSS_SELECTOR, "div.production-statistic.-likes a.tooltip"
+            )
+
+            watched_count_raw = watches_elem.get_attribute("data-original-title")
+            likes_count_raw = likes_elem.get_attribute("data-original-title")
+
+            rating, rating_count = self._extract_numbers(tooltip_text)
+            watched = self._extract_numbers(watched_count_raw)[0]
+            liked = self._extract_numbers(likes_count_raw)[0]
+
         except Exception:
-            err = traceback.format_exc()
-            with open("letterbox_error_log.csv", "a", encoding="utf-8") as f:
-                f.write(f"{row['film']},{row['year_film']},{err}\n")
-            continue
+            print(traceback.format_exc())
 
-        rate_limit(i)
+        return {
+            "lb_rating": rating,
+            "lb_rating_count": rating_count,
+            "lb_rating_outof": 5.0,
+            "lb_watched_by": watched,
+            "lb_liked_by": liked,
+        }
 
-    driver.quit()
-
-    return
+    def write_to_output(self, data):
+        df = pd.DataFrame([*data], columns=self.output_columns)
+        df.to_csv(self.output_path, index=False)
