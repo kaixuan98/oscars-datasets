@@ -1,6 +1,6 @@
 import re
 import traceback
-from scripts.scraper_source.base_scraper import AbstractScraper
+from scripts.scraper_source.rate_scraper import AbstractScraper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC

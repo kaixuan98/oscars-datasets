@@ -3,7 +3,7 @@ import re
 import traceback
 import pandas as pd
 from selenium.webdriver.common.by import By
-from scripts.scraper_source.base_scraper import AbstractScraper
+from scripts.scraper_source.rate_scraper import AbstractScraper
 
 
 class MetacriticScraper(AbstractScraper):

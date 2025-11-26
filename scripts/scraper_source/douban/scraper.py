@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from selenium.webdriver.common.by import By
-from scripts.scraper_source.base_scraper import AbstractScraper
+from scripts.scraper_source.rate_scraper import AbstractScraper
 
 
 class DoubanScraper(AbstractScraper):
