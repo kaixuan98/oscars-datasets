@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 import os
-import os
 import traceback
 import unicodedata
-from bs4 import BeautifulSoup
 import pandas as pd
 from selenium import webdriver
 from datetime import datetime
@@ -135,9 +133,7 @@ class AbstractScraper(ABC):
         input_path="data/raw/master_list.csv",
     ) -> pd.DataFrame:
         """
-        Load the list of data from master to be process
-        """
-        df = pd.read_csv(input_path)
+        Load the list of data frodf = pd.read_csv(input_path)
 
         if os.path.exists(self.output_path):
             done = pd.read_csv(self.output_path)
@@ -150,7 +146,8 @@ class AbstractScraper(ABC):
             ~df.apply(lambda x: (x["film"], x["year_film"]) in processed_titles, axis=1)
         ]
 
-        return to_process
+        return to_processm master to be process
+        """
 
     @abstractmethod
     def extract_match(self, sources, target) -> str:
