@@ -10,8 +10,6 @@ from datetime import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from scripts.scraper_source.utils import rate_limit
 
 
@@ -45,12 +43,12 @@ class AbstractScraper(ABC):
                 else:
                     search_results = self.search_film(query)
 
-                found_url = self.extract_match(search_results, row)
+                # found_url = self.extract_match(search_results, row)
 
-                if not found_url:
-                    raise Exception(
-                        f"No matching film found in top 10 results: {row['film ']} - {row['year_film']}"
-                    )
+                # if not found_url:
+                #     raise Exception(
+                #         f"No matching film found in top 10 results: {row['film ']} - {row['year_film']}"
+                #     )
 
                 # ratings = self.extract_score(found_url)
                 # all_rows.append([*row, found_url, *ratings.values()])
@@ -154,29 +152,9 @@ class AbstractScraper(ABC):
 
         return to_process
 
+    @abstractmethod
     def extract_match(self, sources, target) -> str:
-        sources_df = pd.DataFrame(sources)
-        clean_source_title = (
-            sources_df["title"]
-            .str.strip()
-            .str.lower()
-            .str.replace("’", "")
-            .str.replace("'", "")
-        )
-        clean_target_title = (
-            target["film"].strip().lower().replace("’", "").replace("'", "")
-        )
-        year_diff = sources_df["year"] - int(target["year_film"])
-
-        filtered_films = sources_df[
-            (clean_source_title == clean_target_title)
-            & ((year_diff <= 1) & (year_diff >= -1))
-        ]
-        found_url = None
-        if len(filtered_films) > 0:
-            found_url = filtered_films.iloc[0]["url"]
-
-        return found_url
+        pass
 
     @abstractmethod
     def search_film(self, query: str) -> list:

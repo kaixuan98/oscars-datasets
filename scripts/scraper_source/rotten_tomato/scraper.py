@@ -64,6 +64,32 @@ class RottenTomatoScraper(AbstractScraper):
 
         return all_searches
 
+    def extract_match(self, sources, target):
+        sources_df = pd.DataFrame(sources)
+        clean_source_title = (
+            sources_df["title"]
+            .str.strip()
+            .str.lower()
+            .str.replace("’", "")
+            .str.replace("'", "")
+        )
+        clean_target_title = (
+            target["film"].strip().lower().replace("’", "").replace("'", "")
+        )
+        year_diff = sources_df["year"] - int(target["year_film"])
+
+        filtered_films = sources_df[
+            (clean_source_title == clean_target_title)
+            & ((year_diff <= 1) & (year_diff >= -1))
+        ]
+        found_url = None
+        if len(filtered_films) > 0:
+            found_url = filtered_films.iloc[0]["url"]
+        else:
+            found_url = sources_df.iloc[0]["url"]
+
+        return found_url
+
     def extract_score(self, source_url):
         self.driver.get(source_url)
 

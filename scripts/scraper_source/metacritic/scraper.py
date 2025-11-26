@@ -53,7 +53,6 @@ class MetacriticScraper(AbstractScraper):
 
         for s in search_results[:10]:
             try:
-
                 title_elem = s.find_element(
                     By.CSS_SELECTOR, 'p[data-testid="product-title"]'
                 )
@@ -85,14 +84,17 @@ class MetacriticScraper(AbstractScraper):
         clean_target_title = (
             target["film"].strip().lower().replace("’", "").replace("'", "")
         )
+        year_diff = sources_df["year"] - int(target["year_film"])
+
         filtered_films = sources_df[
             (clean_source_title == clean_target_title)
-            & (sources_df["year"] == target["year_film"])
+            & ((year_diff <= 1) & (year_diff >= -1))
         ]
-
         found_url = None
         if len(filtered_films) > 0:
             found_url = filtered_films.iloc[0]["url"]
+        else:
+            found_url = sources_df.iloc[0]["url"]
 
         return found_url
 
