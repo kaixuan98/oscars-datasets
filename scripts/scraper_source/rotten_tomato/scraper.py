@@ -1,7 +1,6 @@
 import re
 import traceback
 import pandas as pd
-from datetime import datetime, timezone
 from selenium.webdriver.common.by import By
 from scripts.scraper_source.rate_scraper import AbstractScraper
 
@@ -10,7 +9,6 @@ class RottenTomatoScraper(AbstractScraper):
     def __init__(self):
         super().__init__()
         self.base_search_path = "https://www.rottentomatoes.com/search?search="
-        extract_date = datetime.now(timezone.utc).strftime("%Y%m%d")
         extended_columns = [
             "rt_url",
             "rt_units",
@@ -20,7 +18,7 @@ class RottenTomatoScraper(AbstractScraper):
             "rt_audiences_count",
         ]
         self.source_name = "rotten_tomato"
-        self.output_path = f"data/scraped/rt_{extract_date}.csv"
+        self.output_path = "data/scraped/rotten-tomato.csv"
         self._update_output_columns(extended_columns)
 
     def _clean_rt_rating(self, raw: str) -> float:

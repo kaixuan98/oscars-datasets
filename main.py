@@ -7,16 +7,13 @@ from scripts.scraper_source.rotten_tomato.distribution_scraper import (
 from scripts.scraper_source.letterbox.scraper import LetterboxScraper
 from scripts.scraper_source.metacritic.scraper import MetacriticScraper
 from scripts.scraper_source.rotten_tomato.scraper import RottenTomatoScraper
-from scripts.utils import create_master_list, create_master_list_with_imdb
+from scripts.utils import create_master_list, create_master_list_from_rt
 
 # all dataset sources url
 sources = ["alanvourch/tmdb-movies-daily-updates"]
 # sources = ["unanimad/the-oscar-award"]
 
 if __name__ == "__main__":
-    print("Start process")
-    run_distribution_scraper()
-    # create_master_list_with_imdb()
     # file_paths = download_kaggle_dataset(sources)
     # upload_to_s3(file_paths)
     # master_list_path = create_master_list()
@@ -37,6 +34,8 @@ if __name__ == "__main__":
     # douban_scraper = DoubanScraper()
     # douban_scraper.run()
 
-    # imdb - awards
+    # filmaffunity- awards
 
-    # imdb - distributor
+    # rotten tomato - distributors
+    # create_master_list_from_rt()
+    run_distribution_scraper()

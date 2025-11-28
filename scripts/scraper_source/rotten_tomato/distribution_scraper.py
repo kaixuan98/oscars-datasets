@@ -1,17 +1,13 @@
 import os
 import traceback
-from bs4 import BeautifulSoup
 import pandas as pd
 from scripts.scraper_source.utils import make_driver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 driver = make_driver()
-input_path = f"{os.getcwd()}/data/raw/master_list_imdb.csv"
-output_path = f"{os.getcwd()}/data/scraped/imdb_distributors.csv"
+input_path = f"{os.getcwd()}/data/raw/master_list_rt.csv"
+output_path = f"{os.getcwd()}/data/scraped/distributors.csv"
 output_columns = ["film", "year_film", "year_ceremony", "imdb_id"]
-base_url = "https://www.imdb.com/title/"
 
 
 def load__to_process__data():
@@ -34,24 +30,21 @@ def load__to_process__data():
 def run_distribution_scraper() -> None:
     all_rows = []
     to_process_df = load__to_process__data()
+    df_columns = to_process_df.columns.to_list()
 
     for i, row in to_process_df.tail(3).iterrows():
         try:
-            # build imdb url + fetch the page
-            film_url = f"{base_url}{row['imdb_id']}/companycredits"
-            driver.get(film_url)
+            driver.get(row["rt_url"])
 
-            html = driver.page_source
-            soup = BeautifulSoup(html, "html.parser")
-            print(soup.prettify())
-
-            distribution_list = driver.find_element(
-                By.CSS_SELECTOR,
-                "div[role='presentation']",
+            block = driver.find_element(
+                By.XPATH,
+                "//div[@class='category-wrap' and @data-qa='item'][.//rt-text[text()='Distributor']]",
             )
-            print(distribution_list)
+            distributor = block.find_element(
+                By.XPATH, ".//rt-text[@data-qa='item-value']"
+            )
 
-            # all_rows.append([*row, found_url, *ratings.values()])
+            all_rows.append([*row, distributor.text])
         except Exception:
             err = traceback.format_exc()
             print(err)
@@ -60,6 +53,7 @@ def run_distribution_scraper() -> None:
             continue
 
         # rate_limit(i)
-    # write_to_output(all_rows)
+    df = pd.DataFrame([*all_rows], columns=[*df_columns, "distributor"])
+    df.to_csv("data/scraped/distributors.csv", index=False)
     driver.quit()
     return

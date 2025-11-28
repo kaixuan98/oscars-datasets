@@ -43,8 +43,6 @@ class AbstractScraper(ABC):
 
                 found_url = self.extract_match(search_results, row)
 
-                print(row["film"])
-
                 if not found_url:
                     raise Exception(
                         f"No matching film found in top 10 results: {row['film ']} - {row['year_film']}"
