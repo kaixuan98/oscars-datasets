@@ -1,6 +1,10 @@
 from scripts.extract import download_kaggle_dataset
 from scripts.load import upload_to_s3
 from scripts.scraper_source.douban.scraper import DoubanScraper
+from scripts.scraper_source.awards.award_scraper_context import (
+    AwardScraperContext,
+)
+from scripts.scraper_source.awards.golden_globe import GoldenGlobeStrategy
 from scripts.scraper_source.rotten_tomato.distribution_scraper import (
     run_distribution_scraper,
 )
@@ -35,7 +39,9 @@ if __name__ == "__main__":
     # douban_scraper.run()
 
     # filmaffunity- awards
+    golden_globe_context = AwardScraperContext(GoldenGlobeStrategy())
+    golden_globe_context.process_extraction()
 
     # rotten tomato - distributors
     # create_master_list_from_rt()
-    run_distribution_scraper()
+    # run_distribution_scraper()
