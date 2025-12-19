@@ -18,8 +18,9 @@ class GoldenGlobeStrategy(AwardScraperStrategy):
         self.output_file = "data/scraped/golden_globes.csv"
         self.driver = DriverManager().create_web_driver()
 
-    def extract(self, years: list[str]):
+    def extract(self, years):
         print("Start Extracting golden globe...")
+
         try:
             all_nominees = []
 
