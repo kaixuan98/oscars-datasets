@@ -1,6 +1,7 @@
 from scripts.extract import download_kaggle_dataset
 from scripts.load import upload_to_s3
 from scripts.scraper_source.awards.critics_choice import CriticsChoiceStrategy
+from scripts.scraper_source.awards.screen_actor_guild import ScreenActorGuildStrategy
 from scripts.scraper_source.douban.scraper import DoubanScraper
 from scripts.scraper_source.awards.award_scraper_context import (
     AwardScraperContext,
@@ -43,8 +44,11 @@ if __name__ == "__main__":
     # golden_globe_context = AwardScraperContext(GoldenGlobeStrategy())
     # golden_globe_context.process_extraction()
 
-    critics_choice_context = AwardScraperContext(CriticsChoiceStrategy())
-    critics_choice_context.process_extraction()
+    # critics_choice_context = AwardScraperContext(CriticsChoiceStrategy())
+    # critics_choice_context.process_extraction()
+
+    sag_context = AwardScraperContext(ScreenActorGuildStrategy())
+    sag_context.process_extraction()
 
     # rotten tomato - distributors
     # create_master_list_from_rt()
