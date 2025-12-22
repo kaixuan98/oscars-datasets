@@ -3,6 +3,7 @@ from scripts.load import upload_to_s3
 from scripts.scraper_source.awards.bafta import BaftaStrategy
 from scripts.scraper_source.awards.critics_choice import CriticsChoiceStrategy
 from scripts.scraper_source.awards.screen_actor_guild import ScreenActorGuildStrategy
+from scripts.scraper_source.awards.venice_golden_lion import VeniceGoldenLionStrategy
 from scripts.scraper_source.douban.scraper import DoubanScraper
 from scripts.scraper_source.awards.award_scraper_context import (
     AwardScraperContext,
@@ -51,8 +52,11 @@ if __name__ == "__main__":
     # sag_context = AwardScraperContext(ScreenActorGuildStrategy())
     # sag_context.process_extraction()
 
-    bafta_context = AwardScraperContext(BaftaStrategy())
-    bafta_context.process_extraction()
+    # bafta_context = AwardScraperContext(BaftaStrategy())
+    # bafta_context.process_extraction()
+
+    venice_context = AwardScraperContext(VeniceGoldenLionStrategy())
+    venice_context.process_extraction()
 
     # rotten tomato - distributors
     # create_master_list_from_rt()
