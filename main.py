@@ -1,5 +1,6 @@
 from scripts.extract import download_kaggle_dataset
 from scripts.load import upload_to_s3
+from scripts.scraper_source.awards.bafta import BaftaStrategy
 from scripts.scraper_source.awards.critics_choice import CriticsChoiceStrategy
 from scripts.scraper_source.awards.screen_actor_guild import ScreenActorGuildStrategy
 from scripts.scraper_source.douban.scraper import DoubanScraper
@@ -47,8 +48,11 @@ if __name__ == "__main__":
     # critics_choice_context = AwardScraperContext(CriticsChoiceStrategy())
     # critics_choice_context.process_extraction()
 
-    sag_context = AwardScraperContext(ScreenActorGuildStrategy())
-    sag_context.process_extraction()
+    # sag_context = AwardScraperContext(ScreenActorGuildStrategy())
+    # sag_context.process_extraction()
+
+    bafta_context = AwardScraperContext(BaftaStrategy())
+    bafta_context.process_extraction()
 
     # rotten tomato - distributors
     # create_master_list_from_rt()
