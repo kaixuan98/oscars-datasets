@@ -10,6 +10,23 @@ class VeniceGoldenLionStrategy(AwardScraperStrategy):
         super().__init__()
         self.output_file = "data/scraped/venice_golden_lion.csv"
 
+    def __get_wikitables_for_winners_section(self, soup):
+        h2 = soup.find("h2", id="Winners")
+        if not h2:
+            return []
+
+        tables = []
+
+        for elem in h2.parent.find_next_siblings():
+            # Stop when next section starts
+            if elem.name == "div" and elem.find("h2"):
+                break
+
+            if elem.name == "table" and "wikitable" in elem.get("class", []):
+                tables.append(elem)
+
+        return tables
+
     def extract(self, years: list[str]):
         print("Start extracting golden lion")
         all_nomimees = []
@@ -17,7 +34,7 @@ class VeniceGoldenLionStrategy(AwardScraperStrategy):
             page = wikipedia.page("Golden Lion")
             soup = BeautifulSoup(page.html(), "html.parser")
 
-            tables = soup.find_all("table", class_="wikitable")
+            tables = self.__get_wikitables_for_winners_section(soup)
 
             for table in tables:
                 current_year = None
@@ -26,12 +43,22 @@ class VeniceGoldenLionStrategy(AwardScraperStrategy):
                     continue
 
                 for row in rows:
-                    # get year
-                    year_th = row.find("th")
-                    film_td = row.find("td")
-                    if not year_th or not film_td:
+                    cells = row.find_all(["th", "td"])
+                    if not cells:
                         continue
-                    current_year = year_th.get_text(strip=True)
+
+                    # get year
+                    if (
+                        cells[0].name in ["th", "td"]
+                        and cells[0].get_text(strip=True).isdigit()
+                    ):
+                        current_year = cells[0].get_text(strip=True)
+                        if len(cells) > 1:
+                            film_td = cells[1]
+                        else:
+                            continue
+                    else:
+                        film_td = cells[0]
 
                     # get film title
                     film_link = film_td.find("a")

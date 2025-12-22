@@ -42,12 +42,22 @@ class CannesPalmdeOrStrategy(AwardScraperStrategy):
                     continue
 
                 for row in rows:
-                    # get year
-                    year_th = row.find("th")
-                    film_td = row.find("td")
-                    if not year_th or not film_td:
+                    cells = row.find_all(["th", "td"])
+                    if not cells:
                         continue
-                    current_year = year_th.get_text(strip=True)
+                    # get year
+                    if (
+                        cells[0].name in ["th", "td"]
+                        and cells[0].get_text(strip=True).isdigit()
+                    ):
+                        current_year = cells[0].get_text(strip=True)
+                        if len(cells) > 1:
+                            film_td = cells[1]
+                        else:
+                            # Skip this row if no film
+                            continue
+                    else:
+                        film_td = cells[0]  # same year as previous
 
                     # get film title
                     film_link = film_td.find("a")

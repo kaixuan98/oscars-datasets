@@ -56,11 +56,11 @@ if __name__ == "__main__":
     # bafta_context = AwardScraperContext(BaftaStrategy())
     # bafta_context.process_extraction()
 
-    # venice_context = AwardScraperContext(VeniceGoldenLionStrategy())
-    # venice_context.process_extraction()
+    venice_context = AwardScraperContext(VeniceGoldenLionStrategy())
+    venice_context.process_extraction()
 
-    cannes_context = AwardScraperContext(CannesPalmdeOrStrategy())
-    cannes_context.process_extraction()
+    # cannes_context = AwardScraperContext(CannesPalmdeOrStrategy())
+    # cannes_context.process_extraction()
 
     # rotten tomato - distributors
     # create_master_list_from_rt()
