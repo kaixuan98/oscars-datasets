@@ -30,7 +30,7 @@ class AbstractScraper(ABC):
         self.start_driver()
         to_process_df = self.load_to_process_data()
 
-        for i, row in to_process_df.tail(3).iterrows():
+        for i, row in to_process_df.iterrows():
             try:
                 query = self.query_formatter(row["film"])
                 if self.source_name == "douban":
@@ -50,6 +50,7 @@ class AbstractScraper(ABC):
 
                 ratings = self.extract_score(found_url)
                 all_rows.append([*row, found_url, *ratings.values()])
+                print(all_rows)
             except Exception:
                 err = traceback.format_exc()
                 print(err)
@@ -57,7 +58,7 @@ class AbstractScraper(ABC):
                     f.write(f"{row['film']},{row['year_film']},{err}\n")
                 continue
 
-            # rate_limit(i)
+            rate_limit(i)
         self.write_to_output(all_rows)
         self.close_driver()
         return
@@ -130,9 +131,7 @@ class AbstractScraper(ABC):
         self,
         input_path="data/raw/master_list.csv",
     ) -> pd.DataFrame:
-        """
-        Load the list of data frodf = pd.read_csv(input_path)
-
+        df = pd.read_csv(input_path)
         if os.path.exists(self.output_path):
             done = pd.read_csv(self.output_path)
         else:
@@ -144,8 +143,7 @@ class AbstractScraper(ABC):
             ~df.apply(lambda x: (x["film"], x["year_film"]) in processed_titles, axis=1)
         ]
 
-        return to_processm master to be process
-        """
+        return to_process
 
     @abstractmethod
     def extract_match(self, sources, target) -> str:

@@ -54,6 +54,6 @@ def run_distribution_scraper() -> None:
 
         # rate_limit(i)
     df = pd.DataFrame([*all_rows], columns=[*df_columns, "distributor"])
-    df.to_csv("data/scraped/distributors.csv", index=False)
+    df.to_csv("data/scraped/distributors.csv", mode="a", index=False)
     driver.quit()
     return
