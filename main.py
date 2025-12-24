@@ -28,8 +28,8 @@ if __name__ == "__main__":
     # master_list_path = create_master_list()
 
     # letterbox
-    # lb_scraper = LetterboxScraper()
-    # lb_scraper.run()
+    lb_scraper = LetterboxScraper()
+    lb_scraper.run()
 
     # rotten tomato
     # rt_scraper = RottenTomatoScraper()
@@ -56,8 +56,8 @@ if __name__ == "__main__":
     # bafta_context = AwardScraperContext(BaftaStrategy())
     # bafta_context.process_extraction()
 
-    venice_context = AwardScraperContext(VeniceGoldenLionStrategy())
-    venice_context.process_extraction()
+    # venice_context = AwardScraperContext(VeniceGoldenLionStrategy())
+    # venice_context.process_extraction()
 
     # cannes_context = AwardScraperContext(CannesPalmdeOrStrategy())
     # cannes_context.process_extraction()

@@ -124,4 +124,4 @@ class RottenTomatoScraper(AbstractScraper):
     def write_to_output(self, data):
         # remove the index
         df = pd.DataFrame([*data], columns=self.output_columns)
-        df.to_csv(self.output_path, index=False)
+        df.to_csv(self.output_path, mode="a", index=False)
