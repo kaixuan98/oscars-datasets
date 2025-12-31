@@ -1,3 +1,4 @@
+import logging
 from scripts.extract import download_kaggle_dataset
 from scripts.load import upload_to_s3
 from scripts.scraper_source.awards.bafta import BaftaStrategy
@@ -16,15 +17,22 @@ from scripts.scraper_source.rotten_tomato.distribution_scraper import (
 from scripts.scraper_source.letterbox.scraper import LetterboxScraper
 from scripts.scraper_source.metacritic.scraper import MetacriticScraper
 from scripts.scraper_source.rotten_tomato.scraper import RottenTomatoScraper
+from scripts.scraper_source.utils import setup_logging
 from scripts.utils import create_master_list, create_master_list_from_rt
+
+setup_logging()
 
 # all dataset sources url
 sources = ["alanvourch/tmdb-movies-daily-updates"]
 # sources = ["unanimad/the-oscar-award"]
 
+
 if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
+    # logger.info("Download Kaggle Datasets")
     # file_paths = download_kaggle_dataset(sources)
     # upload_to_s3(file_paths)
+    # logger.info("Create the master list")
     # master_list_path = create_master_list()
 
     # letterbox

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import logging
 import os
 import traceback
 import unicodedata
@@ -26,10 +27,12 @@ class AbstractScraper(ABC):
         self.output_columns = [*self.output_columns, *extended_columns]
 
     def run(self) -> None:
+        logger = logging.getLogger(__name__)
         all_rows = []
         self.start_driver()
         to_process_df = self.load_to_process_data()
 
+        logger.info("Start scraping %s", self.source_name)
         for i, row in to_process_df.iterrows():
             try:
                 query = self.query_formatter(row["film"])
@@ -50,12 +53,9 @@ class AbstractScraper(ABC):
 
                 ratings = self.extract_score(found_url)
                 all_rows.append([*row, found_url, *ratings.values()])
-                print(all_rows)
+                logger.info("Scrapped %s", row["film"])
             except Exception:
-                err = traceback.format_exc()
-                print(err)
-                with open("logs/errors/error_log.csv", "a", encoding="utf-8") as f:
-                    f.write(f"{row['film']},{row['year_film']},{err}\n")
+                logger.exception(f"Error scraping {row['film']} - {row['year_film']}")
                 continue
 
             rate_limit(i)
