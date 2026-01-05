@@ -1,7 +1,7 @@
+import logging
 import os
-import traceback
 import pandas as pd
-from scripts.scraper_source.utils import make_driver
+from scripts.scraper_source.utils import make_driver, rate_limit
 from selenium.webdriver.common.by import By
 
 driver = make_driver()
@@ -28,11 +28,16 @@ def load__to_process__data():
 
 
 def run_distribution_scraper() -> None:
+    logger = logging.getLogger(__name__)
     all_rows = []
     to_process_df = load__to_process__data()
     df_columns = to_process_df.columns.to_list()
 
-    for i, row in to_process_df.tail(3).iterrows():
+    logger.info(
+        "Start scraping distributor from rt",
+    )
+
+    for i, row in to_process_df.iterrows():
         try:
             driver.get(row["rt_url"])
 
@@ -45,14 +50,12 @@ def run_distribution_scraper() -> None:
             )
 
             all_rows.append([*row, distributor.text])
+            logger.info(f"Scrapped {row['film']}")
         except Exception:
-            err = traceback.format_exc()
-            print(err)
-            with open("logs/errors/error_log.csv", "a", encoding="utf-8") as f:
-                f.write(f"{row['film']},{row['year_film']},{err}\n")
+            logger.exception(f"Error scraping {row['film']} - {row['year_film']}")
             continue
 
-        # rate_limit(i)
+        rate_limit(i)
     df = pd.DataFrame([*all_rows], columns=[*df_columns, "distributor"])
     df.to_csv("data/scraped/distributors.csv", mode="a", index=False)
     driver.quit()
