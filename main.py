@@ -36,8 +36,8 @@ if __name__ == "__main__":
     # master_list_path = create_master_list()
 
     # letterbox
-    lb_scraper = LetterboxScraper()
-    lb_scraper.run()
+    # lb_scraper = LetterboxScraper()
+    # lb_scraper.run()
 
     # rotten tomato
     # rt_scraper = RottenTomatoScraper()
@@ -52,8 +52,8 @@ if __name__ == "__main__":
     # douban_scraper.run()
 
     # awards
-    # golden_globe_context = AwardScraperContext(GoldenGlobeStrategy())
-    # golden_globe_context.process_extraction()
+    golden_globe_context = AwardScraperContext(GoldenGlobeStrategy())
+    golden_globe_context.process_extraction()
 
     # critics_choice_context = AwardScraperContext(CriticsChoiceStrategy())
     # critics_choice_context.process_extraction()
@@ -71,5 +71,5 @@ if __name__ == "__main__":
     # cannes_context.process_extraction()
 
     # rotten tomato - distributors
-    # create_master_list_from_rt()
+    # create_master_list_from_rt('data/scraped/rt-20260102.csv')
     # run_distribution_scraper()

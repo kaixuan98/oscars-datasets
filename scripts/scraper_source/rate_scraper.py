@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 import logging
 import os
-import traceback
 import unicodedata
 import pandas as pd
 from selenium import webdriver
