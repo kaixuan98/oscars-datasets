@@ -1,4 +1,5 @@
 import csv
+import logging
 import traceback
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
@@ -10,6 +11,8 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from scripts.scraper_source.utils import rate_limit
+
 
 class GoldenGlobeStrategy(AwardScraperStrategy):
     def __init__(self):
@@ -19,13 +22,14 @@ class GoldenGlobeStrategy(AwardScraperStrategy):
         self.driver = DriverManager().create_web_driver()
 
     def extract(self, years):
-        print("Start Extracting golden globe...")
+        logger = logging.getLogger(__name__)
+        logger.info("Start extracting golden globe")
 
         try:
             all_nominees = []
 
             # get each year best picture in drama and comedy
-            for y in years:
+            for i, y in enumerate(years):
                 self.driver.get(self.base_url)
 
                 # select the dropdown button
@@ -77,6 +81,7 @@ class GoldenGlobeStrategy(AwardScraperStrategy):
                             }
                         )
 
+                rate_limit(i)
             # output the data into a csv file
             fieldnames = all_nominees[0].keys()
 
@@ -84,6 +89,6 @@ class GoldenGlobeStrategy(AwardScraperStrategy):
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
                 writer.writeheader()  # write header row
                 writer.writerows(all_nominees)  # write all rows
+
         except Exception:
-            err = traceback.format_exc()
-            print(err)
+            logger.exception("Error scraping golden globe")
