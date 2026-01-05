@@ -6,6 +6,7 @@
 from scripts.scraper_source.awards.award_scrapper_strategy import (
     AwardScraperStrategy,
 )
+from scripts.utils import extract_all_years
 
 
 class AwardScraperContext:
@@ -22,5 +23,5 @@ class AwardScraperContext:
 
     # context will run the strategy
     def process_extraction(self) -> None:
-        years = ["2025", "2024"]
+        years = extract_all_years()
         self.strategy.extract(years)
