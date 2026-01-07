@@ -1,0 +1,9 @@
+oscar_data_profile:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: dev.duckdb
+    # cloud:
+    #   type: motherduck
+      # all the configuration for motherduck
