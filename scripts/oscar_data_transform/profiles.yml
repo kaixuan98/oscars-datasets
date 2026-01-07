@@ -3,7 +3,7 @@ oscar_data_profile:
   outputs:
     dev:
       type: duckdb
-      path: dev.duckdb
+      path: /Users/kaixuanchin/Code/oscars-datasets/duckdb/oscars_analysis_database.duckdb
     # cloud:
     #   type: motherduck
       # all the configuration for motherduck
