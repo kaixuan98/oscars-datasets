@@ -1,0 +1,41 @@
+models:
+  - name: stg_letterboxd__ratings
+    description: "Staging model for letterboxd audience ratings scraped from website. Each row is one film with its corresponding data collected from Letterboxd"
+    columns:
+      - name: title 
+        description: "Movie title from master list"
+      - name: title_lower
+        description: "Lower case movie title used for joining across sources in following stage"
+      - name: release_year
+        description: "Film release year from master list"
+        tests: 
+          - not_null
+          - accepted_range:
+              min: 1990
+              max: 2025
+      - name: letterboxd_url
+        description: "The url where all the rating is extracted from"
+      - name: letterboxd_rating
+        description: "Audience rating on 0-5 scale"
+        tests:
+          - not_null
+          - accepted_range:
+              min: 0
+              max: 5
+      - name: letterboxd_rating_count
+        description: "Number of audience ratings recorded on Letterboxd."
+        tests:
+          - accepted_range:
+              min: 0
+
+      - name: letterboxd_watched
+        description: "Count of users who logged the film as watched."
+        tests:
+          - accepted_range:
+              min: 0
+
+      - name: letterboxd_liked
+        description: "Count of users who liked the film."
+        tests:
+          - accepted_range:
+              min: 0
