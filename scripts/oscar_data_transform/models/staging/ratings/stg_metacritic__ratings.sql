@@ -5,9 +5,9 @@ select
     year_ceremony,
     mc_url,
     cast(mc_metascore as integer),
-    cast(lb_metascore_count as integer),
-    cast(lb_users_score as double),
-    cast(lb_users_score_count as integer)
+    cast(mc_metascore_count as integer),
+    cast(mc_users_score as double),
+    cast(mc_users_count as integer)
 from
     read_csv_auto(
         "/Users/kaixuanchin/Code/oscars-datasets/data/scraped/mc_20260102.csv"

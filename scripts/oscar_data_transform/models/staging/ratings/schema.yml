@@ -217,14 +217,14 @@ models:
           - accepted_range:
               min: 0
 
-      - name: mc_user_score
+      - name: mc_users_score
         description: "Metacritic user rating (0.0–10.0 scale)."
         tests:
           - accepted_range:
               min: 0
               max: 10
 
-      - name: mc_user_score_count
+      - name: mc_users_count
         description: "Number of users contributing to the user rating."
         tests:
           - accepted_range:
