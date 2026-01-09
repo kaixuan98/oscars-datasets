@@ -1,7 +1,7 @@
 select
     film as title,
     lower(film) as title_lower,
-    year_film as release_year,
+    cast(year_film as integer) as release_year,
     year_ceremony,
     lb_url,
     cast(lb_rating as double),
