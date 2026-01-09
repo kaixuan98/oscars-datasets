@@ -1,0 +1,231 @@
+models:
+  - name: stg_letterboxd__ratings
+    description: "Staging model for letterboxd audience ratings scraped from website. Each row is one film with its corresponding data collected from Letterboxd"
+    columns:
+      - name: title 
+        description: "Movie title from master list"
+      - name: title_lower
+        description: "Lower case movie title used for joining across sources in following stage"
+      - name: release_year
+        description: "Film release year from master list"
+        tests: 
+          - not_null
+          - accepted_range:
+              min: 1990
+              max: 2025
+      - name: lb_url
+        description: "The url where all the rating is extracted from"
+      - name: lb_rating
+        description: "Audience rating on 0-5 scale"
+        tests:
+          - not_null
+          - accepted_range:
+              min: 0
+              max: 5
+      - name: lb_rating_count
+        description: "Number of audience ratings recorded on Letterboxd."
+        tests:
+          - accepted_range:
+              min: 0
+
+      - name: lb_watched_by
+        description: "Count of users who logged the film as watched."
+        tests:
+          - accepted_range:
+              min: 0
+
+      - name: lb_liked_by
+        description: "Count of users who liked the film."
+        tests:
+          - accepted_range:
+              min: 0
+  - name: stg_rotten_tomatoes__ratings
+    description: "Staging model for Rotten Tomatoes critics and audience ratings scraped from RottenTomatoes.com. One row per film per release year."
+
+    columns:
+      - name: title
+        description: "Movie title as provided by the scraped Rotten Tomatoes data."
+
+      - name: title_lower
+        description: "Normalized lowercase film title for cross-source joining."
+        tests:
+          - not_null
+
+      - name: release_year
+        description: "Film release year associated with the Rotten Tomatoes record."
+        tests:
+          - not_null
+          - accepted_range:
+              min: 1900
+              max: 2100
+
+      - name: year_ceremony
+        description: "Year of ceremony for context when matching awards."
+
+      - name: rt_url
+        description: "Canonical Rotten Tomatoes URL identifying the movie page."
+
+      - name: rt_tomatometer
+        description: "Rotten Tomatoes critics score (0–100)."
+        tests:
+          - accepted_range:
+              min: 0
+              max: 100
+
+      - name: rt_critics_count
+        description: "Number of critics reviews counted for the tomatometer."
+        tests:
+          - accepted_range:
+              min: 0
+
+      - name: rt_popcornmeter
+        description: "Rotten Tomatoes audience score (0–100)."
+        tests:
+          - accepted_range:
+              min: 0
+              max: 100
+
+      - name: rt_audiences_count
+        description: "Number of audience ratings counted for the popcorn score."
+        tests:
+          - accepted_range:
+              min: 0
+  - name: stg_tmdb__ratings
+    description: "Staging model for TMDB movie metadata and TMDB user audience ratings sourced from Kaggle. One record per movie."
+
+    columns:
+      - name: movie_id
+        tests:
+          - not_null
+          - unique
+
+      - name: title
+
+      - name: title_lower
+        description: "Lowercased version of the title for cross-source joining."
+        tests:
+          - not_null
+
+      - name: release_date
+        description: "Official release date (YYYY-MM-DD)."
+
+      - name: release_year
+        description: "Extracted release year for aligning awards and ratings."
+        tests:
+          - not_null
+          - accepted_range:
+              min: 1900
+              max: 2100
+
+      - name: imdb_id
+        description: "IMDb identifier for cross-source movie joins."
+        tests:
+          - not_null
+
+      - name: tmdb_user_score
+        description: "TMDB user audience rating (0.0–100.0 scale)."
+        tests:
+          - accepted_range:
+              min: 0
+              max: 10
+
+      - name: tmdb_user_score_count
+        description: "Number of TMDB user votes counted for the user score."
+        tests:
+          - accepted_range:
+              min: 0
+  - name: stg_imdb__ratings
+    description: "Staging model for IMDB audience ratings sourced from Kaggle. One record per movie."
+
+    columns:
+      - name: movie_id
+        description: "movie id from the dataset"
+        tests:
+          - not_null
+          - unique
+
+      - name: title
+
+      - name: title_lower
+        description: "Lowercased title used for joining across rating and awards datasets."
+        tests:
+          - not_null
+
+      - name: release_date
+        description: "Full release date as YYYY-MM-DD."
+
+      - name: release_year
+        description: "Extracted film release year from release_date."
+        tests:
+          - not_null
+          - accepted_range:
+              min: 1900
+              max: 2100
+
+      - name: imdb_id
+        description: "IMDb title identifier for cross-source linkage."
+        tests:
+          - not_null
+
+      - name: imdb_rating
+        description: "IMDb audience rating (0.0–10.0 scale)."
+        tests:
+          - accepted_range:
+              min: 0
+              max: 10
+
+      - name: imdb_rating_count
+        description: "Number of IMDb audience ratings submitted."
+        tests:
+          - accepted_range:
+              min: 0
+  - name: stg_metacritic__ratings
+    description: "Staging model for Metacritic critics (metascore) and user ratings scraped from Metacritic.com. One row per film per release year."
+
+    columns:
+      - name: title
+
+      - name: title_lower
+        description: "Normalized lowercase film title to support cross-source joining."
+        tests:
+          - not_null
+
+      - name: release_year
+        description: "Film release year from master list"
+        tests:
+          - not_null
+          - accepted_range:
+              min: 1900
+              max: 2100
+
+      - name: year_ceremony
+        description: "Ceremony year for award matching context."
+
+      - name: mc_url
+        description: "Canonical Metacritic page URL for the film."
+
+      - name: mc_metascore
+        description: "Metacritic critics metascore (0–100 scale)."
+        tests:
+          - accepted_range:
+              min: 0
+              max: 100
+
+      - name: mc_metascore_count
+        description: "Number of critic reviews counted for the metascore."
+        tests:
+          - accepted_range:
+              min: 0
+
+      - name: mc_users_score
+        description: "Metacritic user rating (0.0–10.0 scale)."
+        tests:
+          - accepted_range:
+              min: 0
+              max: 10
+
+      - name: mc_users_count
+        description: "Number of users contributing to the user rating."
+        tests:
+          - accepted_range:
+              min: 0

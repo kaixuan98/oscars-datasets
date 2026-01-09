@@ -9,8 +9,8 @@ select
             release_date
     ) as release_year,
     imdb_id,
-    cast(vote_average as double) as tmdb_user_score,
-    cast(vote_count as integer) as tmdb_user_score_count,
+    cast(imdb_rating as double) as imdb_rating,
+    cast(imdb_votes as integer) as imdb_rating_count,
 from
     read_csv_auto(
         "/Users/kaixuanchin/Code/oscars-datasets/data/raw/TMDB_all_movies.csv"
