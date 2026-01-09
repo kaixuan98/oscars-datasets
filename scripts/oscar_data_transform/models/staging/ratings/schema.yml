@@ -13,28 +13,28 @@ models:
           - accepted_range:
               min: 1990
               max: 2025
-      - name: letterboxd_url
+      - name: lb_url
         description: "The url where all the rating is extracted from"
-      - name: letterboxd_rating
+      - name: lb_rating
         description: "Audience rating on 0-5 scale"
         tests:
           - not_null
           - accepted_range:
               min: 0
               max: 5
-      - name: letterboxd_rating_count
+      - name: lb_rating_count
         description: "Number of audience ratings recorded on Letterboxd."
         tests:
           - accepted_range:
               min: 0
 
-      - name: letterboxd_watched
+      - name: lb_watched_by
         description: "Count of users who logged the film as watched."
         tests:
           - accepted_range:
               min: 0
 
-      - name: letterboxd_liked
+      - name: lb_liked_by
         description: "Count of users who liked the film."
         tests:
           - accepted_range:
