@@ -9,7 +9,7 @@ select
             release_date
     ) as release_year,
     imdb_id,
-    cast(imdb_rating as double),
+    cast(imdb_rating as double) as imdb_rating,
     cast(imdb_votes as integer) as imdb_rating_count,
 from
     read_csv_auto(
