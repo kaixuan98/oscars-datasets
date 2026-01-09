@@ -9,7 +9,7 @@ select
             release_date
     ) as release_year,
     imdb_id,
-    cast(vote_average as integer) as tmdb_user_score,
+    cast(vote_average as double) as tmdb_user_score,
     cast(vote_count as integer) as tmdb_user_score_count,
 from
     read_csv_auto(
