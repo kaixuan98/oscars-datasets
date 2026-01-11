@@ -3,7 +3,7 @@ select
     lower(title) as title_lower,
     year as ceremony_year,
     lower(category) as award_category,
-    'golden_globe' as award_body,
+    'golden globe' as award_body,
     is_winner as won_flag,
     case
         when is_winner = true then 'WON'

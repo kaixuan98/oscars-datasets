@@ -5,6 +5,7 @@ select
     cast(
         regexp_replace(split_part(year, '(', 2), '[^0-9]', '', 'g') as int
     ) as ceremony,
+    'sag' as award_body,
     'outstanding performance by a cast in a motion picture' as award_category,
     is_winner as won_flag,
     case

@@ -5,6 +5,7 @@ select
     cast(
         regexp_replace(split_part(year, '(', 2), '[^0-9]', '', 'g') as int
     ) as ceremony,
+    'bafta' as award_body,
     'best film' as award_category,
     is_winner as won_flag,
     case
