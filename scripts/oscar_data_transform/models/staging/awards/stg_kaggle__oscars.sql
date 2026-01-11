@@ -6,7 +6,7 @@ SELECT
     ceremony,
     name,
     winner as won_flag,
-    canon_category as award_category,
+    lower(canon_category) as award_category,
     'oscars' as award_body,
     case
         when winner = true then 'WON'
