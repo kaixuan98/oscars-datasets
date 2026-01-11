@@ -2,7 +2,7 @@ SELECT
     film as title,
     lower(film) as title_lower,
     year_film as release_year,
-    year_ceremony,
+    year_ceremony as ceremony_year,
     ceremony,
     name,
     winner as won_flag,

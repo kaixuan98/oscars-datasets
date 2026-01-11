@@ -1,7 +1,7 @@
 select
     title,
     lower(title) as title_lower,
-    year as release_year,
+    year as ceremony_year,
     lower(category) as award_category,
     'golden_globe' as award_body,
     is_winner as won_flag,

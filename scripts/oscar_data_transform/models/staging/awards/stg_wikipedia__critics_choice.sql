@@ -1,7 +1,7 @@
 select
     film as title,
     lower(film) as title_lower,
-    year as release_year,
+    year as ceremony_year,
     'best picture' as award_category,
     is_winner as won_flag,
     case
