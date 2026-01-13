@@ -25,8 +25,6 @@ select
     music_composer,
     poster_path
 from
-    read_csv_auto(
-        "/Users/kaixuanchin/Code/oscars-datasets/data/raw/TMDB_all_movies.csv"
-    )
+    {{source('raw_data', 'TMDB_all_movies')}}
 where
     release_date > '1989-01-01'

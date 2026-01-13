@@ -1,0 +1,21 @@
+sources:
+  - name: raw_data
+    meta:
+      external_location: "/Users/kaixuanchin/Code/oscars-datasets/data/raw/{name}.csv"
+    tables:
+      - name: TMDB_all_movies
+      - name: the_oscar_award 
+  - name: scraped_data
+    meta: 
+      external_location: "/Users/kaixuanchin/Code/oscars-datasets/data/scraped/{name}.csv"
+    tables:
+      - name: lb_20260102
+      - name: mc_20260102
+      - name: rt-20260102
+      - name: distributors
+      - name: bafta
+      - name: critics_choice
+      - name: golden_globes
+      - name: screen_actor_guild
+      - name: venice_golden_lion
+      - name: cannes_palme_d_or
