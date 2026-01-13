@@ -1,0 +1,8 @@
+[sqlfluff]
+dialect = postgres
+templater = dbt
+exclude_rules = L009 
+
+[sqlfluff:templater:dbt]
+profile = oscar_data_profile 
+target = dev
