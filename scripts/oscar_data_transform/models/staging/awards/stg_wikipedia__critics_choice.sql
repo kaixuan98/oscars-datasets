@@ -10,6 +10,4 @@ select
         else 'NOMINATED'
     end as award_result
 from
-    read_csv_auto(
-        '/Users/kaixuanchin/Code/oscars-datasets/data/scraped/critics_choice.csv'
-    )
+    {{source('scraped_data','critics_choice')}}

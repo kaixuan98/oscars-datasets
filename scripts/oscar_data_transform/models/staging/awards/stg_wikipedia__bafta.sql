@@ -13,8 +13,6 @@ select
         else 'NOMINATED'
     end as award_result
 from
-    read_csv_auto(
-        '/Users/kaixuanchin/Code/oscars-datasets/data/scraped/bafta.csv'
-    )
+    {{source('scraped_data','bafta')}}
 where
     year is not null

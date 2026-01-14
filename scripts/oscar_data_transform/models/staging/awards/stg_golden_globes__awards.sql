@@ -10,6 +10,4 @@ select
         else 'NOMINATED'
     end as award_result
 from
-    read_csv_auto(
-        '/Users/kaixuanchin/Code/oscars-datasets/data/scraped/golden_globes.csv'
-    )
+    {{source('scraped_data', 'golden_globes')}}
