@@ -1,7 +1,7 @@
 select
     film as title,
     lower(film) as title_lower,
-    cast(split_part(year, '(', 1) as int) as ceremony_year,
+    cast(split_part(year, '(', 1) as int) + 1 as ceremony_year,
     cast(
         regexp_replace(split_part(year, '(', 2), '[^0-9]', '', 'g') as int
     ) as ceremony,
