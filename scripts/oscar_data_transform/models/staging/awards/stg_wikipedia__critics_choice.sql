@@ -1,7 +1,7 @@
 select
     film as title,
-    lower(film) as title_lower,
-    year as ceremony_year,
+    REGEXP_REPLACE(lower(film), '[^a-zA-Z0-9]', '', 'g') as title_lower,
+    cast(split_part(year, '[', 1) as int) + 1 as ceremony_year,
     'critics choice' as award_body,
     'best picture' as award_category,
     is_winner as won_flag,
@@ -10,6 +10,4 @@ select
         else 'NOMINATED'
     end as award_result
 from
-    read_csv_auto(
-        '/Users/kaixuanchin/Code/oscars-datasets/data/scraped/critics_choice.csv'
-    )
+    {{source('scraped_data','critics_choice')}}

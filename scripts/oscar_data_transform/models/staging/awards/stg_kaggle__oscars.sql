@@ -1,9 +1,8 @@
 SELECT
     film as title,
-    lower(film) as title_lower,
+    REGEXP_REPLACE(lower(film), '[^a-zA-Z0-9]', '', 'g') as title_lower,
     year_film as release_year,
     year_ceremony as ceremony_year,
-    ceremony,
     name,
     winner as won_flag,
     lower(canon_category) as award_category,
@@ -13,6 +12,4 @@ SELECT
         else 'NOMINATED'
     end as award_result
 FROM
-    read_csv_auto(
-        '/Users/kaixuanchin/Code/oscars-datasets/data/raw/the_oscar_award.csv'
-    )
+    {{source("raw_data", 'the_oscar_award')}}

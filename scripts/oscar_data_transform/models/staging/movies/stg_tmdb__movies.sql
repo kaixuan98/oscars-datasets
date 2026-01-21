@@ -1,7 +1,7 @@
 select
     id as movie_id,
     title,
-    lower(title) as title_lower,
+    REGEXP_REPLACE(lower(title), '[^a-zA-Z0-9]', '', 'g') as title_lower,
     release_date,
     extract(
         'year'
