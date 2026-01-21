@@ -6,7 +6,7 @@ with enriched as (
     left join {{ref('stg_tmdb__movies')}} as movies 
         on 
             bafta.title_lower = movies.title_lower
-            and bafta.ceremony_year between movies.release_year - 1 and movies.release_year + 1
+            and bafta.ceremony_year between movies.release_year - 2 and movies.release_year + 2
     where ceremony_year > 1990
 ), 
 

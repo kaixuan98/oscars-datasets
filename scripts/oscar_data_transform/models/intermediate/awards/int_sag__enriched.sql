@@ -4,7 +4,7 @@ with enriched as (select
 from {{ref('stg_wikipedia__sag')}} as sag
 left join {{ref('stg_tmdb__movies')}} as movies 
     on sag.title_lower = movies.title_lower
-    and sag.ceremony_year between movies.release_year - 1 and movies.release_year + 1
+    and sag.ceremony_year between movies.release_year - 2 and movies.release_year + 2
 ), 
 
 dedup as (
