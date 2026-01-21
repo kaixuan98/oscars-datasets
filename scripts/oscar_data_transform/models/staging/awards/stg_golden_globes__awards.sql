@@ -1,7 +1,6 @@
 with raw_clean as (
     select
         title,
-        lower(title) as title_lower,
         regexp_replace(lower(title), '\s*\(\d{4}\)$', '') as title_no_year,
         year as ceremony_year,
         lower(category) as award_category,
@@ -12,8 +11,6 @@ with raw_clean as (
 normalized as (
     select
         title,
-        title_lower,
-        -- normalize inverted titles
         trim(
             case
                 when title_no_year like '%, the' then 'the ' || split_part(title_no_year, ',', 1)
@@ -33,4 +30,12 @@ normalized as (
     from raw_clean
 )
 
-select * from normalized
+select 
+    title,
+    regexp_replace(title_lower_normalized, '[^a-zA-Z0-9]', '', 'g') as title_lower,
+    ceremony_year, 
+    award_category,
+    award_body,
+    won_flag,
+    award_result
+from normalized

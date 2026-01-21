@@ -1,6 +1,6 @@
 SELECT
     film as title,
-    lower(film) as title_lower,
+    REGEXP_REPLACE(lower(film), '[^a-zA-Z0-9]', '', 'g') as title_lower,
     year_film as release_year,
     year_ceremony as ceremony_year,
     name,
