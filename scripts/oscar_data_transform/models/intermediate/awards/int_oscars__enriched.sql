@@ -5,8 +5,8 @@ with enriched as (
     from {{ref('stg_kaggle__oscars')}} as oscars
     left join {{ref('stg_tmdb__movies')}} as movies 
         on 
-            oscars.title_lower = movies.title_lower
-            and oscars.ceremony_year between movies.release_year - 1 and movies.release_year + 1
+            oscars.title_lower like movies.title_lower ||'%'
+            and oscars.ceremony_year between movies.release_year - 2 and movies.release_year + 2
     where ceremony_year > 1990 and award_category = 'best picture'
 ), 
 
