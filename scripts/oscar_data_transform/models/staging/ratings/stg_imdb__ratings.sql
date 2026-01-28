@@ -1,19 +1,15 @@
 select
-    id as movie_id,
     title,
-    lower(title) as title_lower,
-    release_date,
+    REGEXP_REPLACE(lower(title), '[^a-zA-Z0-9]', '', 'g') as title_lower,
     extract(
         'year'
         FROM
             release_date
     ) as release_year,
     imdb_id,
-    cast(imdb_rating as double) as imdb_rating,
-    cast(imdb_votes as integer) as imdb_rating_count,
+    cast(imdb_rating as double) as rating,
+    cast(imdb_votes as integer) as rating_count,
 from
-    read_csv_auto(
-        "/Users/kaixuanchin/Code/oscars-datasets/data/raw/TMDB_all_movies.csv"
-    )
+    {{source('raw_data', 'TMDB_all_movies')}}
 where
     release_date > '1989-01-01'
