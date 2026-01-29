@@ -20,7 +20,7 @@ select
     title,
     title_lower,
     release_year,
-    lb_url,
+    lb_url as url,
     rating_value,
     rating_count,
     watched_count,
