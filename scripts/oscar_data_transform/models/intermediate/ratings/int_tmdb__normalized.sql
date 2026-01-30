@@ -38,9 +38,9 @@ select
     imdb_id,
     rating as rating_value,
     rating_count,
-    'imdb' as rating_source,
+    'tmdb' as rating_source,
     'audience' as rating_group,
-    10 as rating_scale
+    100 as rating_scale
 from dedup
 where rn=1 
 
