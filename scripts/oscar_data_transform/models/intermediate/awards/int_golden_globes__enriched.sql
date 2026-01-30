@@ -1,11 +1,18 @@
 with enriched as (
     select 
         golden_globes.*,
-        movies.imdb_id
+         coalesce(
+            overwritten.imdb_id,
+            movies.imdb_id
+        ) as imdb_id
     from {{ ref('stg_golden_globes__awards') }} as golden_globes
+    left join {{ref('film_identity_overwrite')}} as overwritten
+        on overwritten.source_system = 'golden globe'
+        and overwritten.source_title_lower = golden_globes.title_lower
+        and overwritten.source_year = golden_globes.ceremony_year
     left join {{ ref('stg_tmdb__movies') }} as movies
         on
-        golden_globes.title_lower like movies.title_lower || '%'
+        golden_globes.title_lower =movies.title_lower
         and golden_globes.ceremony_year between movies.release_year - 1 and movies.release_year + 2
 ), 
 
