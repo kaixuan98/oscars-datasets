@@ -4,8 +4,9 @@ with enriched as(
         movies.imdb_id
     from {{ref('stg_metacritic__ratings')}} as metacritic
     left join {{ref('stg_tmdb__movies')}} as movies
-        on metacritic.title_lower like movies.title_lower || '%'
+        on metacritic.title_lower = movies.title_lower
         and metacritic.release_year between movies.release_year - 1 and movies.release_year + 1
+        and movies.runtime > 80
 ), 
 
 dedup as (

@@ -4,8 +4,9 @@ with enriched as(
         movies.imdb_id
     from {{ref('stg_rotten_tomatoes__ratings')}} as rotten_tomatoes
     left join {{ref('stg_tmdb__movies')}} as movies
-        on rotten_tomatoes.title_lower=movies.title_lower
+        on rotten_tomatoes.title_lower = movies.title_lower
         and rotten_tomatoes.release_year between movies.release_year - 1 and movies.release_year + 1
+        and movies.runtime > 80
 ), 
 
 dedup as (

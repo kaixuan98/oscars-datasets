@@ -26,7 +26,7 @@ dedup as (
     select 
         *,
         row_number() over (partition by title_lower
-                            order by case when imdb_id is not null and rating_count > 10000 then 1 else 2 end) as rn 
+                            order by case when imdb_id is not null and rating_count > 500 then 1 else 2 end) as rn 
     from merged
 )
 
