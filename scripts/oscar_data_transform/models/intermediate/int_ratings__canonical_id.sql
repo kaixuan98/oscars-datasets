@@ -2,7 +2,7 @@ with imdb_preferred as (
     select
         title_lower,
         max(imdb_id) as canonical_imdb_id
-    from {{ ref('int_ratings__unify') }}
+    from {{ ref('int_ratings__patched') }}
     where rating_source = 'imdb'
       and imdb_id is not null
     group by title_lower
@@ -12,7 +12,7 @@ imdb_counts as (
         title_lower,
         imdb_id,
         count(*) as cnt
-    from {{ ref('int_ratings__unify') }}
+    from {{ ref('int_ratings__patched') }}
     where imdb_id is not null
     group by title_lower, imdb_id
 ), 
@@ -45,6 +45,6 @@ select
     r.*,
     r.imdb_id as original_imdb_id,
     c.canonical_imdb_id
-from {{ ref('int_ratings__unify') }} r
+from {{ ref('int_ratings__patched') }} r
 left join canonical_imdb c
     on r.title_lower = c.title_lower
