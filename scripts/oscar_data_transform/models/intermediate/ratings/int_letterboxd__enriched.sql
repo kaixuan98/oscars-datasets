@@ -4,8 +4,9 @@ with enriched as(
         movies.imdb_id
     from {{ref('stg_letterboxd__ratings')}} as letterboxd
     left join {{ref('stg_tmdb__movies')}} as movies
-        on letterboxd.title_lower like movies.title_lower || '%'
+        on letterboxd.title_lower = movies.title_lower
         and letterboxd.release_year between movies.release_year - 1 and movies.release_year + 1
+        and movies.runtime > 80
 ), 
 
 dedup as (
