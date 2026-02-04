@@ -40,7 +40,7 @@ select
     rating_count,
     'tmdb' as rating_source,
     'audience' as rating_group,
-    100 as rating_scale
+    10 as rating_scale
 from dedup
 where rn=1 
 
